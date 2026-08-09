@@ -16,7 +16,11 @@ Agent discovery / catalog
 
 ### Network
 
-Testnet - Celo Sepolia (chainId 11142220)
+Both, and the split matters for reading the rest: every observation below was made on
+**Mainnet - Celo (chainId 42220)**, because that is where our agent and the registry we
+swept live. The Aigora registration path this report criticises is the hackathon one on
+**Testnet - Celo Sepolia (chainId 11142220)**. Anything labelled with an agent id or the
+registry address `0x8004A169FB4a3325136EB29fA0ceB6D2e539a432` is mainnet.
 
 ### Your feedback
 
@@ -42,8 +46,9 @@ agent already lives: `celo/9759` in `0x8004A169FB4a3325136EB29fA0ceB6D2e539a432`
 `https://a-identity.xyz/.well-known/agent-card.json`. The skill is explicit and correct
 that a direct `register()` will not appear in your catalog, because listing comes from
 provenance. But provenance is not readable from chain state. Today we read the 500 most recently minted
-ids off that contract and paid our own oracle to verify a slice of them one by one, and
-from that data there is no way to compute "which of these are on Aigora". The one signal
+ids off that contract (token ids 9256-9759, read 2026-08-09 ~14:10Z, Celo mainnet head
+block 74387565 at 15:12Z) and paid our own oracle to verify a slice of them one by one,
+and from that data there is no way to compute "which of these are on Aigora". The one signal
 you offer, `onAigora: true`, your own skill documents as self-declared, spoofable, and
 never to be gated on. That is the honest description of it, and it also means the signal
 cannot answer the question. There is also no documented way to claim or import an agent
@@ -63,9 +68,27 @@ max_lag_seconds, status, cursors{...lag_seconds}}`) that is more honest about it
 freshness than most indexers we integrate. It is referenced only in the site CSP, it is
 documented nowhere, and `/agents` on it is a 404.
 
+Evidence, so this can be told apart from a transient deploy state. All seven URLs
+observed at **2026-08-09T15:12:00Z**, following the same result at ~13:46Z:
+
+| URL | status | content-type |
+|---|---|---|
+| `https://aigora.org/api/agents` | 200 | `text/html; charset=utf-8` |
+| `https://aigora.org/api/services` | 200 | `text/html; charset=utf-8` |
+| `https://aigora.org/llms.txt` | 200 | `text/html; charset=utf-8` |
+| `https://aigora.org/skill.md` | 200 | `text/html; charset=utf-8` |
+| `https://aigora-indexer-vfl5n4ujkq-ey.a.run.app/` | 200 | `application/json` |
+| `https://aigora-indexer-vfl5n4ujkq-ey.a.run.app/health` | 200 | `application/json` |
+| `https://aigora-indexer-vfl5n4ujkq-ey.a.run.app/agents` | 404 | `application/json` |
+
+The indexer reported `network: celo-sepolia`, `chainId: 11142220`, `indexer_epoch: 11`,
+`max_lag_seconds: 164` at that moment.
+
 **Smaller, same theme.** The registry holds at least three tokenURI conventions in one
 contract: an `https://` agent card (#9759), an `ipfs://` CID (#9752), and a gzipped
-base64 `data:application/json` URI (#1). We had to handle all three tonight. The skill
+base64 `data:application/json` URI (#1). All three read live from
+`0x8004A169FB4a3325136EB29fA0ceB6D2e539a432` on Celo mainnet on 2026-08-09 between
+13:45Z and 15:12Z. We had to handle all three tonight. The skill
 notes that a fresh agent may show `name = null` while the indexer catches up, but the
 owner has no way to tell "indexer is lagging" from "my metadata is in a form you do not
 resolve" - the two failure modes look identical on the profile page.
@@ -95,20 +118,36 @@ twice" as its supported path.
 
 Concretely, in the order we would value them:
 
-1. **Publish the provenance set.** One authenticated-free endpoint, `GET /api/agents`,
-   returning the agents registered through Aigora with `{agentId, chainId, owner,
-   tokenURI, registeredAt}`. That single endpoint fixes points 2 and 3 at once: it makes
-   the catalog machine-readable and makes "on Aigora" a verifiable claim a third party can
-   check, instead of a spoofable JSON key. Document it in the repo README and serve a real
-   `/llms.txt` and `/skill.md` from the app instead of the SPA shell.
-2. **Add a prepared-transaction mode to registration.** Let a caller submit the metadata,
-   get back the pinned CID plus the exact `register` and `setAgentURI` calldata, and
-   broadcast from their own signer. Provenance is preserved because the pin came from
-   Aigora, so these agents can still be catalog-listed, and `aigora-register` becomes a
-   skill an agent can actually finish.
-3. **Add a claim flow for existing on-chain agents.** A signature from the current
-   `ownerOf(agentId)` is sufficient proof to list an agent that already exists, and it
-   avoids pushing established agents into minting a second identity.
+1. **Publish the provenance set, with evidence rather than assertion.** One unauthenticated
+   `GET /api/agents` returning, per agent: `agentId`, `chainId`, `registryAddress`,
+   `owner`, `tokenURI`, and the registration evidence itself - `registrationTxHash`,
+   `blockNumber`, `logIndex`. Say explicitly whether `owner` and `tokenURI` are current
+   or as-of-registration, because they are mutable and the two answers differ. A caller
+   can then replay the log entry against Celo and confirm the listing without trusting
+   the response, which is the whole point: a bare JSON list is our `onAigora` problem
+   again, just served from your domain instead of a spoofable key. Signing the payload
+   (or publishing a Merkle root over it) is a reasonable second step, but the tx hash and
+   log index alone already make it independently checkable. Document it in the repo
+   README and serve a real `/llms.txt` and `/skill.md` from the app instead of the SPA
+   shell.
+2. **Add a prepared-transaction mode to registration.** Let a caller submit the metadata
+   and get back the pinned CID plus a complete, broadcastable pair: for each of `register`
+   and `setAgentURI`, the `to` (registry address), `chainId`, `data` (encoded calldata),
+   and `value`. Say how long the prepared pair is valid and what happens on retry - a
+   stable idempotency key over the metadata, so retrying returns the same CID and calldata
+   instead of a second pin. And define how you match the externally broadcast transaction
+   back to your pin before you mark the agent provenance-eligible: watching the registry
+   for a `setAgentURI` whose URI equals the CID you issued is enough, and it keeps the
+   provenance claim yours rather than the caller's. Provenance survives, and
+   `aigora-register` becomes a skill an agent can actually finish.
+3. **Add a claim flow for existing on-chain agents, bound so it cannot be replayed.** Our
+   first instinct was "a signature from `ownerOf(agentId)` is enough", and that is too
+   loose: a bare signature is replayable across agents, chains and time. Verify a
+   domain-separated message carrying `chainId`, the registry address, `agentId`, the
+   claiming account, a nonce and an expiry, reject reused nonces and expired messages, and
+   accept ERC-1271 when `ownerOf` is a contract - a good share of serious agents are owned
+   by a multisig, and EOA-only signature recovery locks exactly those out. That avoids
+   pushing established agents into minting a second identity.
 4. **Distinguish the two `name = null` cases on the profile.** "Indexed, metadata
    unresolvable at `<uri>`" versus "not indexed yet, lag Ns" - you already have the lag
    number in the indexer health document.
@@ -125,3 +164,10 @@ in front of us and still could not answer "which of these are on Aigora".
 
 Repo: https://github.com/getA-Identity/A-Identity
 Agent: https://8004scan.io/agents/celo/9759
+
+A note on this entry's own history, since it is public: suggestions 1, 2 and 3 above are
+tighter than the version first pushed to this PR. Your repo's automated reviewer flagged
+them as under-specified, and on three of the four points it was right - most usefully
+that a bare `ownerOf` signature is replayable. Those are folded in above. The one thing
+it caught that was a genuine error rather than a missing detail was ours: the header
+originally said Celo Sepolia while every observation in the body is Celo mainnet. Fixed.
