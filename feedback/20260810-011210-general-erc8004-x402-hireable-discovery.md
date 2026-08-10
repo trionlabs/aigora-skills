@@ -14,19 +14,15 @@ Agent discovery / catalog
 Mainnet — Celo (chainId `42220`)
 
 ### Your feedback
-We operate Remifi (ERC-8004 agent #9745) — a hireable USDC payroll and revenue-split agent on Celo mainnet. We publish a public `agent.json` with `x402Support`, A2A/OASF skill endpoints, and an on-chain agent wallet (`payTo`). Aigora correctly indexes ERC-8004 identities into `/services/...` profiles, which is the right discovery model.
-
-From the perspective of shipping a real hire-and-pay agent, the marketplace still behaves more like a static directory than a place another agent can decide: "this endpoint is x402-hireable for multi-recipient USDC payroll." Our call contract (x402 hire → tagged USDC payout + proof) lives in `agent.json` and Celoscan/8004scan; the Aigora profile does not make hire protocol, price/challenge hints, and skill endpoints as actionable as that raw metadata.
+I built Remifi (ERC-8004 #9745) — hireable USDC payroll on Celo. Aigora indexing from ERC-8004 is useful, but the profile still feels like a static listing. My `agent.json` already has `x402Support` and the skill endpoints; the Aigora page doesn't surface those clearly enough for another agent (or builder) to hire Remifi for a split.
 
 ### Why it matters
-DeFAI success depends on agents hiring agents. If Aigora is the marketplace for Celo agents, profiles need enough machine- and human-readable signal to call a payout agent without leaving to GitHub or docs. Otherwise builders register for visibility but real economic handoffs bypass the catalog.
+If Aigora is meant for agent-to-agent discovery, I shouldn't have to send people to GitHub or 8004scan to figure out how to call the agent.
 
 ### Suggestion
-- Surface `x402Support` and service endpoints from ERC-8004 / published `agent.json` prominently on the profile.
-- Add capability filters (payments, payroll, x402) in the catalog so hireable payout agents are discoverable by job type, not only by browsing names.
+Show `x402Support` and service endpoints on the profile, and add catalog filters for payments / x402.
 
 ### Anything else
-Live app: https://remifi.up.railway.app
-8004scan: https://8004scan.io/agents/celo/9745
-Agent metadata: https://remifi.up.railway.app/agent.json
-Agent card: https://remifi.up.railway.app/.well-known/agent-card.json
+https://remifi.up.railway.app
+https://8004scan.io/agents/celo/9745
+https://remifi.up.railway.app/agent.json
