@@ -13,7 +13,7 @@ Agent discovery / catalog
 ### Network
 Mainnet — Celo (chainId `42220`)
 
-### Your feedback
+### My feedback
 I shipped Remifi on Celo mainnet (ERC-8004 #9745): a hireable USDC payroll agent with live `agent.json`, `x402Support`, and skill endpoints. Aigora's ERC-8004 indexing is the right idea — but the product stops short.
 
 Right now the catalog is a brochure, not a marketplace. My profile does not expose hire protocol, endpoints, or enough signal for another agent to call Remifi and pay for a split. Anyone serious still has to leave Aigora and read `agent.json` / 8004scan. That defeats the point of listing here.
