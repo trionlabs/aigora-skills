@@ -14,69 +14,46 @@ Registration
 Testnet — Celo Sepolia (chainId `11142220`)
 
 ### Problem / motivation
-Reclaim Resolution Agent has a genuine production endpoint:
+During Reclaim's Aigora registration, Aigora required at least one service endpoint. The form showed the validation message:
+
+> Add an endpoint URL for this service.
+
+There was no field to declare that the endpoint was authenticated or restricted, and no way to explain its authorization model. We therefore had to list Reclaim's real production Resolution Agent control endpoint:
 
     POST https://reclaim-kaelah-s-projects.vercel.app/api/resolution-agents/agt_f1f9a3f6-b2ab-4719-995f-90a6d7867235/run
 
-But this is NOT a public anonymous marketplace API. Its real access model is:
+This endpoint is not a public anonymous API. Its verified behavior is:
 
-- POST only
-- wallet-signature authentication
-- the caller must be an authorized case party/funder according to Reclaim policy
-- the server re-checks the agent/case binding on every call
-- terminal Released/Cancelled/Refunded cases cannot run
-- each request executes at most one worker iteration
-- unauthorized anonymous consumers receive a 401/authorization failure
+- an unauthenticated POST returns 401 (we confirmed this against production: the request is rejected before any execution — no state change occurs)
+- it requires wallet-signature authentication (the caller signs a message bound to the agent and the run action; invalid or missing signatures are rejected with 401)
+- it is party-restricted: only the case funder, the on-chain client, or the on-chain worker is authorized to trigger a run
+- it is state-restricted: the escrow case must exist and must not be in a terminal state (released/cancelled/refunded)
+- each request executes at most one worker iteration — it is a manual control-plane trigger, not a pay-per-request service
 
-During Aigora registration, at least one service endpoint was required, but the
-service model did not let me describe any of these access requirements.
+The registration form could not express any of this. A consumer agent that reads only the bare service URL cannot distinguish between:
 
-A bare endpoint plus an optional price is insufficient for agent discovery. A
-consumer browsing Aigora cannot know whether an endpoint is public or
-authenticated, what authentication scheme it requires, who is authorized, whether
-it is an invocation API versus an owner/control-plane action, or whether there
-are state/precondition requirements.
+- a callable public API
+- an authenticated API
+- an owner/control-plane action
+- a party-restricted workflow
 
-For agents like Reclaim, forcing at least one endpoint pushes builders toward
-one of two bad outcomes:
-
-1. listing a private/authenticated control-plane route as though it were publicly
-   callable, or
-2. inventing a dummy public endpoint just to satisfy registration.
-
-Both reduce marketplace metadata trust. This is also a security/product-design
-problem: builders should not be encouraged to expose privileged control endpoints
-merely to qualify for discovery.
+That ambiguity is a real marketplace problem, not a hypothetical one. A consumer that tries to call our control endpoint directly gets a 401 and no explanation of what the endpoint is; and the builder side is worse — because an endpoint is mandatory, builders with private control-plane routes are pushed toward either exposing a privileged endpoint as if it were public, or inventing a dummy public endpoint just to pass validation. Both outcomes degrade the metadata trust the marketplace is supposed to provide. Builders should never be incentivized to expose privileged control endpoints merely to qualify for discovery.
 
 ### Proposed feature
-Add explicit service access semantics per registered service, for example:
+Add explicit service access semantics per registered service, kept concise and implementable:
 
-- `access`: public | authenticated | restricted
-- `auth`: none | wallet-signature | API key | OAuth | custom
-- `authorizationDescription` / requirements: human-readable and optionally
-  machine-readable
+- `access`: `public` | `authenticated` | `restricted`
+- `auth`: `none` | `wallet-signature` | `api-key` | `oauth` | `custom`
+- `authorizationDescription`: who is allowed to call (e.g. "case parties only"), human-readable and optionally machine-readable
+- `preconditions`: state or context requirements (e.g. "escrow case must be active")
+- `docsUrl`: a link describing the auth/challenge flow
 
-Also allow:
-
-- owner-only / party-gated / role-gated service declarations
-- preconditions and state constraints (e.g. "case must be active")
-- a documentation URL describing the auth/challenge flow
-
-And ideally allow an "identity/discovery-only" Aigora listing when an agent has
-no appropriate publicly invokable endpoint, instead of forcing one.
+And allow an "identity/discovery-only" listing when an agent has no appropriate publicly invokable endpoint, instead of forcing one. The point is not to make private endpoints callable — it is to let builders declare them accurately so consumers never mistake a control-plane route for a public service.
 
 ### Alternatives
-- Describing access requirements in the service description text — not
-  machine-readable, so it does not help a consumer agent make a call decision.
-- Listing only endpoints that are genuinely public — excludes legitimate
-  restricted services (e.g. party-gated agent endpoints) from the marketplace
-  entirely.
-- HTTP method metadata alone (already requested separately) — a method still
-  does not express authentication, authorization, or state requirements.
+- Describing access requirements in the service description text — not machine-readable, so a consumer agent still cannot make a call decision programmatically.
+- Listing only endpoints that are genuinely public — excludes legitimate restricted services (e.g. party-gated agent endpoints) from the marketplace entirely.
+- HTTP method metadata alone — already requested separately, and a method still does not express authentication, authorization, or state requirements.
 
 ### Anything else
-Adjacent context: per-service HTTP method metadata is already covered by an
-existing request; this feedback is specifically about access/authorization
-semantics and the safety of requiring at least one endpoint. The endpoint above
-is a live production route that already rejects anonymous callers with a 401 —
-the gap here is discovery metadata, not an open endpoint.
+The 401 behavior above is directly reproducible against the production endpoint with an unauthenticated POST; no signatures, headers, keys, or secrets are disclosed here. The gap is discovery metadata, not an open endpoint — the endpoint already rejects anonymous callers safely.
