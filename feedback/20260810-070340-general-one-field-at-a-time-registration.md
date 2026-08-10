@@ -1,5 +1,5 @@
 ### Contact
-@dominion116
+@dominion116 (Telegram)
 
 ### CELO payout wallet
 0x70f77A5C36eBD667360F6021bF4A95d274B3530e
