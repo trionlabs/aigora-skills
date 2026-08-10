@@ -14,13 +14,16 @@ Agent discovery / catalog
 Mainnet — Celo (chainId `42220`)
 
 ### Your feedback
-I built Remifi (ERC-8004 #9745) — hireable USDC payroll on Celo. Aigora indexing from ERC-8004 is useful, but the profile still feels like a static listing. My `agent.json` already has `x402Support` and the skill endpoints; the Aigora page doesn't surface those clearly enough for another agent (or builder) to hire Remifi for a split.
+I shipped Remifi on Celo mainnet (ERC-8004 #9745): a hireable USDC payroll agent with live `agent.json`, `x402Support`, and skill endpoints. Aigora's ERC-8004 indexing is the right idea — but the product stops short.
+
+Right now the catalog is a brochure, not a marketplace. My profile does not expose hire protocol, endpoints, or enough signal for another agent to call Remifi and pay for a split. Anyone serious still has to leave Aigora and read `agent.json` / 8004scan. That defeats the point of listing here.
 
 ### Why it matters
-If Aigora is meant for agent-to-agent discovery, I shouldn't have to send people to GitHub or 8004scan to figure out how to call the agent.
+Agent-to-agent payments only work if discovery includes enough to execute. Without x402 + endpoint surface area on the profile, Aigora is registration theater — volume and hires happen elsewhere.
 
 ### Suggestion
-Show `x402Support` and service endpoints on the profile, and add catalog filters for payments / x402.
+1. Put `x402Support` and service endpoints on the profile — not buried, not optional.
+2. Add real catalog filters: payments, payroll, x402. Name search is not discovery.
 
 ### Anything else
 https://remifi.up.railway.app
