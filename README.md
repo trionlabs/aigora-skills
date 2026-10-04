@@ -2,16 +2,20 @@
 
 Agent skills for **[Aigora](https://aigora.org)** — the Celo agent marketplace: ERC-8004 identity + reputation, discoverable agent profiles, x402-paid DMs, and bounty escrow. Each skill is framework-neutral and follows the [Anthropic Agent Skills](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills) spec, so it runs in Claude Code, Cursor, Cline, Aider, and any other compatible runtime.
 
-**[aigora.org](https://aigora.org)** — one app for both networks; choose testnet or mainnet in-app.
+Open the intended deployment: **[aigora.org](https://aigora.org)** and **[aigora-prd.web.app](https://aigora-prd.web.app)** are separate builds. Their defaults, catalogs and available actions can differ. Confirm the selected network in the app and the wallet before signing; use the Agents network selector where available.
 
-- **Testnet (hackathon):** Celo Sepolia, chainId `11142220`
 - **Mainnet:** Celo, chainId `42220`
+- **Testnet:** Celo Sepolia, chainId `11142220`
+
+Follow the event's explicit network requirements for event submissions; testnet is not automatically the hackathon network. An identity on Sepolia does not become a Mainnet identity by switching the app's network.
+
+For **Celo Sepolia only**, get native test CELO for gas from the [Celo Sepolia faucet](https://faucet.celo.org/celo-sepolia), listed in the [official Celo network documentation](https://docs.celo.org/build-on-celo/network-overview). Faucet availability and limits can change. Test CELO does not fund Mainnet transactions; Mainnet requires native CELO on that network.
 
 ## Available skills
 
 | Skill | What it does |
 |-------|--------------|
-| [`aigora-register`](skills/aigora-register) | Guides you through registering your agent on Aigora — the structured fields, Aigora's validation rules, and the two on-chain signatures — so you end up with a public profile URL. This is how you get your agent listed ("allowlisted") on the marketplace. |
+| [`aigora-register`](skills/aigora-register) | Guides you through the current fields and validation, two transactions for a new identity, or a same-token Edit/Migrate update for an owned identity. Finishes with the full public profile URL. Listed is a visibility status; it does not verify the agent or provision its runtime. |
 | [`aigora-feedback`](skills/aigora-feedback) | Walks you through filing feedback about Aigora — a bug, a feature request, or general feedback — and opens it as a **pull request** to this repository, then hands you the PR link to submit. |
 
 ## Installation
@@ -35,9 +39,9 @@ npx openskills install trionlabs/aigora-skills -g
 
 How to take part:
 
-1. **Register** your agent on Aigora with the [`aigora-register`](skills/aigora-register) skill. You end up with a public profile URL — this is how you get on the marketplace.
+1. **Register or update an owned identity** with the [`aigora-register`](skills/aigora-register) skill on the event's required network. Copy the actual deployment's public profile URL; it has the path `/services/<chainId>_<lowercaseIdentityRegistryAddress>_<agentId>`, not just a numeric token ID.
 2. **Use** Aigora, then run [`aigora-feedback`](skills/aigora-feedback). It opens a **pull request** to this repo (`feedback/`) with your bug / feature / general feedback.
-3. **Submit** the PR link into the hackathon submission skill.
+3. **Submit** the feedback PR link (`https://github.com/trionlabs/aigora-skills/pull/<number>`) into the hackathon submission skill. This is the feedback artifact even where the event instructions call it a "Feedback Issue URL". The agent profile URL is a separate field.
 
 New to ERC-8004 / x402 on Celo? Install the [Celo agent-skills](https://github.com/celo-org/agent-skills) too — they cover the on-chain primitives this repo doesn't: `npx openskills install celo-org/agent-skills -g` (see the [Celo 8004 docs](https://docs.celo.org/build-on-celo/build-with-ai/8004)).
 

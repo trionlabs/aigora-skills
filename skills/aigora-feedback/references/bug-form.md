@@ -15,7 +15,7 @@ Ask these first, in order. `R` = required, `O` = optional.
 |---|---------------------|----------|-----|---------------------------------------------------------------------------|
 | 1 | Contact             | Text     | R   | **Required** — an email address or Telegram @handle for prize follow-up (public in the PR).   |
 | 2 | CELO payout wallet  | Text     | O   | Your Celo address for the hackathon prize. Address only — never a key.    |
-| 3 | Aigora profile URL  | Text     | O   | Your `…/services/<id>` profile, if you registered. Ties feedback to a real user. |
+| 3 | Aigora profile URL  | Text     | O   | Copy the actual deployment's full profile URL: `…/services/<chainId>_<lowercaseIdentityRegistryAddress>_<agentId>`, if registered. |
 | 4 | Surface             | Dropdown | R   | Which part of Aigora — options below.                                     |
 | 5 | Network             | Dropdown | R   | Which Celo network you used — options below.                             |
 
@@ -24,7 +24,7 @@ Ask these first, in order. `R` = required, `O` = optional.
 | # | Field                    | Type      | R/O | Notes                                             |
 |---|--------------------------|-----------|-----|---------------------------------------------------|
 | 6 | What happened?           | Multiline | R   | What you did, what you expected, what you saw.     |
-| 7 | Steps to reproduce       | Multiline | R   | Minimal steps someone else could follow.           |
+| 7 | Steps to reproduce       | Multiline | R   | Minimal steps someone else could follow; include the app origin you used. |
 | 8 | Logs / console output    | Multiline | O   | Wrap in a ```` ```shell ```` block when provided.  |
 | 9 | Transaction / agent ID   | Text      | O   | Tx hash or agent/service id, if one is involved.   |
 | 10| Anything else            | Multiline | O   | Screenshots (link), recordings, extra context.     |

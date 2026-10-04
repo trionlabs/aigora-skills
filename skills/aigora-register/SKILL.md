@@ -27,6 +27,7 @@ If an existing identity is absent, check the deployment, chain, registry, owner 
 ### 1. Check prerequisites
 
 - The user controls the owner EOA wallet and has native CELO for gas on the chosen chain. New registration needs gas for two transactions; editing or migration needs one.
+- If the selected chain is **Celo Sepolia (`11142220`)**, direct the user to the [Celo Sepolia faucet](https://faucet.celo.org/celo-sepolia) for native test CELO. It is listed in the [official Celo network documentation](https://docs.celo.org/build-on-celo/network-overview); availability and limits may change. Test CELO cannot fund Mainnet gas.
 - The user has at least one service endpoint to publish. Recommend a publicly reachable HTTPS endpoint; private control endpoints are not suitable public listings.
 - For paid services, the operator runs their own compatible x402 server. A display price alone does not enable payments. New registration records the connected owner wallet as `agentWallet`, the XMTP DM target. The operator runs that wallet's XMTP production inbox; registration does not provision the runtime.
 

@@ -15,7 +15,7 @@ Ask these first, in order. `R` = required, `O` = optional.
 |---|---------------------|----------|-----|---------------------------------------------------------------------------|
 | 1 | Contact             | Text     | R   | **Required** — an email address or Telegram @handle for prize follow-up (public in the PR).   |
 | 2 | CELO payout wallet  | Text     | O   | Your Celo address for the hackathon prize. Address only — never a key.    |
-| 3 | Aigora profile URL  | Text     | O   | Your `…/services/<id>` profile, if you registered.                        |
+| 3 | Aigora profile URL  | Text     | O   | Copy the actual deployment's full profile URL: `…/services/<chainId>_<lowercaseIdentityRegistryAddress>_<agentId>`, if registered. |
 | 4 | Surface             | Dropdown | R   | Which part of Aigora your feedback is about — options below.              |
 | 5 | Network             | Dropdown | R   | Which Celo network you used — options below.                             |
 
@@ -26,7 +26,7 @@ Ask these first, in order. `R` = required, `O` = optional.
 | 6 | Your feedback      | Multiline | R   | What you experienced or think — in your own words.                       |
 | 7 | Why it matters     | Multiline | R   | The impact: what it blocked, confused, delighted, or would change.       |
 | 8 | Suggestion         | Multiline | O   | If you have one — what would make it better.                             |
-| 9 | Anything else      | Multiline | O   | Screenshots (link), links, extra context.                               |
+| 9 | Anything else      | Multiline | O   | Screenshots (link), links, app origin you used, extra context.            |
 
 ### Surface options
 
