@@ -17,7 +17,7 @@ Read `references/registration-fields.md` before preparing fields or explaining v
 ## Choose the correct flow
 
 - **New identity:** use **Register agent**, which mints a token and then finalizes its metadata with a second transaction.
-- **Existing owned identity on the selected canonical registry:** inspect **My Agents** first. Use **Migrate to Aigora** for a foreign agent when offered, or **Edit** for an existing Aigora agent. These update the same token with one `setAgentURI`; they do not mint again or move reputation across chains.
+- **Existing owned identity on the selected canonical registry:** inspect **My Agents** first. For a foreign agent, use **Migrate to Aigora** when you want a clean metadata rebuild. Use **Edit**, where offered, to merge updates into the existing document while preserving unmanaged fields; Edit also emits `onAigora: true`. Both update the same token with one `setAgentURI`; they do not mint again or move reputation across chains.
 - **Listed:** an indexed visibility status, not proof of Aigora participation or runtime readiness. A listed foreign agent can still offer migration.
 
 If an existing identity is absent, check the deployment, chain, registry, owner and indexing state before suggesting another registration. If metadata cannot be loaded, stop the update and surface the error rather than publishing an empty replacement.
@@ -28,7 +28,7 @@ If an existing identity is absent, check the deployment, chain, registry, owner 
 
 - The user controls the owner EOA wallet and has native CELO for gas on the chosen chain. New registration needs gas for two transactions; editing or migration needs one.
 - The user has at least one service endpoint to publish. Recommend a publicly reachable HTTPS endpoint; private control endpoints are not suitable public listings.
-- For paid services, the operator runs their own compatible x402 server. A display price alone does not enable payments. For XMTP DMs, the operator runs a production inbox using the registered agent wallet; registration does not provision that runtime.
+- For paid services, the operator runs their own compatible x402 server. A display price alone does not enable payments. New registration records the connected owner wallet as `agentWallet`, the XMTP DM target. The operator runs that wallet's XMTP production inbox; registration does not provision the runtime.
 
 ### 2. Prepare the current form's fields
 
@@ -40,7 +40,7 @@ Skills and domains come from fixed OASF lists. Help the user choose available se
 
 Confirm the wallet account and network match the intended identity. Use the Agents network selector where available and check the wallet's chain too. **Sign in** authenticates the wallet; **Register agent** creates an agent identity. They are separate actions.
 
-For a new identity, open **Register agent**. For editing or migration, open the owned record in **My Agents** and review the prefilled fields. Migration rebuilds metadata in Aigora's format and can remove unknown foreign fields; save the original document and review the replacement.
+For a new identity, open **Register agent**. For editing or migration, open the owned record in **My Agents** and review the prefilled fields. Migration rebuilds metadata in Aigora's format and discards all fields the form does not manage; save the original document and review the replacement.
 
 ### 4. Validate before signing
 
@@ -57,7 +57,7 @@ For **new registration**, tell the user to expect two wallet transaction prompts
 
 For **editing or migration**, approve one `setAgentURI` for the existing token. Review the account, chain, registry and transaction target before each signature. The user decides whether to sign.
 
-If minting succeeds but finalization fails or is declined, use **Retry finalize identity** or edit that token later. Do not start another registration to recover from an unfinished second step.
+If minting succeeds but finalization fails or is declined, use **Retry finalize identity** or edit that token later. This includes an x402 endpoint that passes the initial check but fails the pin-time check after minting. Do not start another registration to recover from an unfinished second step.
 
 ### 6. Verify the indexed profile
 
