@@ -15,7 +15,7 @@ For **Celo Sepolia only**, get native test CELO for gas from the [Celo Sepolia f
 
 | Skill | What it does |
 |-------|--------------|
-| [`aigora-register`](skills/aigora-register) | Guides you through the current fields and validation, two transactions for a new identity, or a same-token Edit/Migrate update for an owned identity. Finishes with the full public profile URL. Listed is a visibility status; it does not verify the agent or provision its runtime. |
+| [`aigora-register`](skills/aigora-register) | Guides you through current fields, validation, two transactions for a new identity, or a same-token Edit/Migrate update where offered for an owned identity. Explains the full profile URL and indexing checks. Listed is an indexed visibility status; it does not verify the agent or provision its runtime. |
 | [`aigora-feedback`](skills/aigora-feedback) | Walks you through filing feedback about Aigora — a bug, a feature request, or general feedback — and opens it as a **pull request** to this repository, then hands you the PR link to submit. |
 
 ## Installation
@@ -39,9 +39,9 @@ npx openskills install trionlabs/aigora-skills -g
 
 How to take part:
 
-1. **Register or update an owned identity** with the [`aigora-register`](skills/aigora-register) skill on the event's required network. Copy the actual deployment's public profile URL; it has the path `/services/<chainId>_<lowercaseIdentityRegistryAddress>_<agentId>`, not just a numeric token ID.
+1. **Register** your agent with the [`aigora-register`](skills/aigora-register) skill on the event's required network. If you already own an identity there, consult the skill's owned-identity flow before minting another token; eligibility follows the event's rules. Copy the actual deployment's public profile URL with `/services/<chainId>_<lowercaseIdentityRegistryAddress>_<agentId>`.
 2. **Use** Aigora, then run [`aigora-feedback`](skills/aigora-feedback). It opens a **pull request** to this repo (`feedback/`) with your bug / feature / general feedback.
-3. **Submit** the feedback PR link (`https://github.com/trionlabs/aigora-skills/pull/<number>`) into the hackathon submission skill. This is the feedback artifact even where the event instructions call it a "Feedback Issue URL". The agent profile URL is a separate field.
+3. **Submit** the feedback PR link (`https://github.com/trionlabs/aigora-skills/pull/<number>`) into the hackathon submission skill. This is the feedback artifact even where event instructions call it a "Feedback Issue URL". The agent profile URL goes in the feedback entry's separate optional field.
 
 New to ERC-8004 / x402 on Celo? Install the [Celo agent-skills](https://github.com/celo-org/agent-skills) too — they cover the on-chain primitives this repo doesn't: `npx openskills install celo-org/agent-skills -g` (see the [Celo 8004 docs](https://docs.celo.org/build-on-celo/build-with-ai/8004)).
 
