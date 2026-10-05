@@ -69,6 +69,10 @@ Read the matching template (`references/bug-form.md`, `references/feature-form.m
 - **Multi-line fields** let the user paste freely. Do not summarise or rewrite their input — the maintainer judging feedback needs the user's own words.
 - Every template shares a header block: **Contact** (**required** — an email address or Telegram @handle, used for prize follow-up; note it is public in the PR), **CELO payout wallet** (optional but needed to receive a hackathon prize), **Aigora profile URL** (optional; ties the feedback to a real registered agent), **Surface** (which part of Aigora), and **Network** (testnet or mainnet).
 
+For **Network**, record the chain the user actually used, not one inferred from the event or website name. For on-chain activity, the profile's chain ID prefix or transaction explorer can help verify it; if it differs from the intended network, describe the mismatch. Do not guess. Ask for the app origin in **Steps to reproduce** for bugs, or **Anything else** for feature/general feedback: `aigora.org` and `aigora-prd.web.app` are separate builds.
+
+For **Aigora profile URL**, copy the actual deployment's full URL with `/services/<chainId>_<lowercaseIdentityRegistryAddress>_<agentId>`; do not construct a numeric-only path. If the user supplies a numeric-only URL via `--profile`, flag the incomplete identity in the preview and keep their exact URL unless they correct it.
+
 ### Step 4 — Draft the entry
 
 Compose the entry in markdown using the section structure from the relevant template. Section headings must match the template labels exactly.
@@ -154,7 +158,7 @@ The user almost certainly does **not** have write access to `trionlabs/aigora-sk
 Notes:
 
 - **Do not pass `--label`.** A PR opened from a fork can't set labels on the upstream repo, and the call will fail (403). The type is encoded in the title (`[Feedback:bug|feature|general]`) and in the entry body; maintainers label on triage.
-- On success, print the **PR URL** plus a one-line summary of what was filed, and tell the user: *"Submit this PR link into the hackathon submission skill."*
+- On success, print the **PR URL** plus a one-line summary of what was filed, and tell the user: *"Submit this PR link into the hackathon submission skill."* The feedback artifact is the `/pull/<number>` URL, including where event instructions call it a "Feedback Issue URL"; the optional agent profile URL is separate.
 
 ### Step 8 — Fallback (no `gh`)
 
@@ -192,7 +196,7 @@ Run `gh auth login` interactively (surface that it opens a browser). On success,
 1. Save the rendered entry to `./aigora-feedback-<timestamp>.md` in the user's current directory.
 2. Print this hand-off, substituting the actual reason and path:
 
-   > Couldn't open the PR via `gh` (`<reason>`). Your feedback is saved at `<path>`. To submit it manually: fork <https://github.com/trionlabs/aigora-skills>, add your saved file under `feedback/`, and open a pull request against `main`. Then submit the PR link into the hackathon submission skill.
+   > Couldn't open the PR via `gh` (`<reason>`). Your feedback is saved at `<path>`. To submit it manually: fork <https://github.com/trionlabs/aigora-skills>, add your saved file under `feedback/`, and open a pull request against `main`. Then submit its `https://github.com/trionlabs/aigora-skills/pull/<number>` link into the hackathon submission skill, including where event instructions call it a "Feedback Issue URL". The agent profile URL belongs in the entry's separate optional field.
 
 3. If `gh` is missing, append: "If you'd rather use `gh` later, install it via <https://github.com/cli/cli#installation> and re-run this skill."
 4. Exit. Do not poll for completion — the user finishes in the browser.
