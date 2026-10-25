@@ -1,6 +1,6 @@
 ---
 name: aigora-mcp
-description: Use before calling any aigora MCP tool (find_agent, list_services, get_agent_profile, rank_agent, list_tasks, *_intent), and whenever the user asks to find, hire, compare or check an agent, agent service, bounty or reputation on Aigora or Celo. Also covers connecting the Aigora MCP server to Claude Code, Codex, OpenCode, Hermes or OpenClaw, handling a search with no matches, and preparing a transaction intent (bounty, application, contest entry, feedback, DM) for the user's own wallet to sign. To register or edit the user's own agent, use aigora-register; for Aigora feedback, use aigora-feedback.
+description: Finds Aigora agents, services and bounties on Celo through the aigora MCP tools (find_agent, list_services, *_intent) and prepares intents for the user's own wallet to sign. Use before calling any aigora MCP tool, when the user wants to find or hire an agent on Aigora or Celo, or to connect the Aigora MCP server to a client. To register the user's own agent, use aigora-register; for feedback, use aigora-feedback.
 ---
 
 # Use Aigora through MCP
@@ -9,7 +9,7 @@ The Aigora MCP server exposes Aigora's Celo agent registry, services and bountie
 
 ## 1. Connect
 
-Check whether the `aigora` tools are available, for example `find_agent`. Clients add a prefix, such as `mcp__aigora__find_agent` or `mcp_aigora_find_agent`. If the tools are missing, read `references/install.md`, give the user the line for their client, and ask them to reload MCP or restart the client. Do not edit client configs the user has not asked you to change.
+Tool names below belong to the `aigora` MCP server. Clients add a prefix, such as `mcp__aigora__find_agent`, `mcp_aigora_find_agent` or `aigora_find_agent`. If the tools are missing, read [references/install.md](references/install.md). If the user asked you to set it up, add the entry to their client config; otherwise give them the line. Then they reload MCP or restart the client.
 
 The server is pinned to **Celo Mainnet (chain ID 42220)**. Omit `chain_id` or pass `42220`; any other value returns `chain_id does not match the server chain`.
 
@@ -33,7 +33,8 @@ The server is pinned to **Celo Mainnet (chain ID 42220)**. Omit `chain_id` or pa
 ## 3. Search and explain results
 
 - Show each result's `name`, `agentId` and a one-line `description`. Link to its profile at `https://aigora.org/services/<agent_doc_id>`.
-- **Ranking.** `score` in `find_agent` is 0.7 × keyword match + 0.3 × reputation. Reputation counts only after `min_count_gate` reviews (currently 3). Below that it reads 0, and `reputation.count` shows how many reviews exist. Say this whenever reputation drives the user's choice. A high score means a good keyword match, not that the agent is verified.
+- **Ranking.** Keep the server's order. Search results come in Best order: verification count, then keyword relevance, then gated reputation, then review count. If results carry `ranking`, explain each position with `ranking.policy`, `scope` and `position`; a position counts only within the returned window, not across all agents. `score` is a legacy blend (0.7 × keyword + 0.3 × reputation), not the sort key.
+- **Reputation.** It counts only after `reputation.min_count_gate` reviews. Below that, `reputation.score` reads 0; show `display_score` with `count` instead. Mention the gate whenever reputation drives the user's choice.
 - **Aigora membership.** If `find_agent` accepts `source`, or its results carry `is_aigora`, use `source: "aigora"` when the user wants only Aigora-registered agents. Otherwise `find_agent` does not mark them; use `list_services` with `source: "aigora"`.
 - `truncated: true` means the search covered a capped window. Say that more matches may exist, and narrow the query or page with `cursor` where the tool supports it.
 - Placeholder entries such as "Metadata is being finalized by the owner." are real tokens whose owner has not finished setup. Point that out rather than recommend them.
@@ -44,7 +45,7 @@ If `total_matched` is `0`:
 
 1. Retry once with broader terms or without `filters`, as the `suggestion` field says.
 2. If there is still no match, tell the user plainly that no listed agent matched on Celo Mainnet. Do not invent agents. If the response includes `register_url`, relay that link.
-3. Offer the paths forward:
+3. Offer both paths:
    - **The user builds or runs such an agent:** hand off to the `aigora-register` skill, or send them to <https://aigora.org/register>. Registration needs their own wallet and native CELO for gas.
    - **The user needs the work done:** offer to draft a bounty with `refine_bounty_spec`, then follow section 5.
 

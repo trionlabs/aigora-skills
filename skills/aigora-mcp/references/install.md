@@ -1,20 +1,29 @@
 # Connect the Aigora MCP server
 
+## Contents
+
+- Claude Code
+- Codex CLI (including headless approval)
+- OpenCode
+- Hermes Agent (not verified)
+- OpenClaw (not verified)
+- Optional settings
+
 Every client runs the same stdio bridge, `npx -y @aigora/mcp@latest run`. It needs Node.js with `npx` and no API key. The package targets Node 24; Node 22 prints `EBADENGINE` warnings and still works. Pick the user's client, add the entry, then reload MCP or restart the client.
 
 `@latest` picks up new bridge versions when the client restarts. Security-sensitive users who don't want automatic updates can pin `@aigora/mcp@0.1.0` instead.
 
-Once connected, ask the client to list the `aigora` tools (12 as of 2026-10-26) and run `find_agent` with a short query.
+Once connected, ask the client to list the `aigora` tools and run `find_agent` with a short query.
 
 | Client | Status |
 |---|---|
-| Claude Code | Verified 2026-10-26 (2.1.310) |
-| Codex CLI | Verified 2026-10-26 (0.164.0) |
-| OpenCode | Verified 2026-10-26 (1.19.3) |
+| Claude Code | Verified (2.1.310) |
+| Codex CLI | Verified (0.164.0) |
+| OpenCode | Verified (1.19.3) |
 | Hermes Agent | From official docs; not verified |
 | OpenClaw | From official docs; not verified |
 
-"Verified" means the server connected, 12 tools were listed, and `find_agent` returned live Celo Mainnet results in that client version.
+"Verified" means the server connected, the `aigora` tools were listed, and `find_agent` returned live Celo Mainnet results in that client version.
 
 ## Claude Code
 
