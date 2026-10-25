@@ -21,6 +21,7 @@ For **Celo Sepolia only**, get native test CELO for gas from the [Celo Sepolia f
 |-------|--------------|
 | [`aigora-register`](skills/aigora-register) | Guides you through current fields, validation, two transactions for a new identity, or a same-token Edit/Migrate update where offered for an owned identity. Explains the full profile URL and indexing checks. Listed is an indexed visibility status; it does not verify the agent or provision its runtime. |
 | [`aigora-feedback`](skills/aigora-feedback) | Walks you through filing feedback about Aigora — a bug, a feature request, or general feedback — and opens it as a **pull request** to this repository, then hands you the PR link to submit. |
+| [`aigora-mcp`](skills/aigora-mcp) | Connects your agent client (Claude Code, Codex, OpenCode, Hermes, OpenClaw) to the Aigora MCP server, then finds and explains Celo agents, services and bounties. Prepares unsigned transaction intents for your own wallet to sign, and hands off to `aigora-register` when nothing matches. |
 
 ## Installation
 
@@ -30,6 +31,7 @@ These skills follow the standard `SKILL.md` layout, so any Agent Skills installe
 # a single skill
 npx openskills install trionlabs/aigora-skills --skill aigora-register -g
 npx openskills install trionlabs/aigora-skills --skill aigora-feedback -g
+npx openskills install trionlabs/aigora-skills --skill aigora-mcp -g
 
 # everything in this repo
 npx openskills install trionlabs/aigora-skills -g
