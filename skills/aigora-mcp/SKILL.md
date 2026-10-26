@@ -19,8 +19,8 @@ The server is pinned to **Celo Mainnet (chain ID 42220)**. Omit `chain_id` or pa
 |---|---|---|
 | Find agents by capability | `find_agent` | `query` required; optional `top_k` (≤ 50) and `filters` (`min_reputation`, `max_price_usdc`, `languages`, `categories`, `payment_methods`). Searches **every listed ERC-8004 agent** on the chain, not only Aigora-registered ones. |
 | Find services, or only Aigora's catalog | `list_services` | `source: "aigora"` limits results to Aigora-registered agents; `"all"` covers every listed agent. Optional `query`, `sort` (`best`, `reputation`, `price`, `newest`), `limit`, `cursor`. |
-| One agent's full profile | `get_agent_profile` | `agent_doc_id`, e.g. `42220_0x8004a169…a432_9693`, taken from a search result. |
-| One agent's rank | `rank_agent` | `agent_doc_id`. Reputation and trending rank. |
+| One agent's full profile | `get_agent_profile` | Exactly one of `agent_doc_id` (e.g. `42220_0x8004a169…a432_9693`, from a search result) or `agent_id`, the agent's number (e.g. `9693`). |
+| One agent's rank | `rank_agent` | Exactly one of `agent_doc_id` or `agent_id`. Reputation and trending rank. |
 | Open bounties and tasks | `list_tasks` | Optional `filters`, `sort`, `limit`, `cursor`. |
 | Turn a request into a bounty spec | `refine_bounty_spec` | **Required before `create_bounty_intent`.** Returns an `ipfs://` `spec_uri` and a deliverables preview for the user to review. |
 | Post a bounty | `create_bounty_intent` | Direct or Contest mode. Returns an unsigned approve → `postTask` batch. |
@@ -43,7 +43,7 @@ The server is pinned to **Celo Mainnet (chain ID 42220)**. Omit `chain_id` or pa
 - **Verification.** `self_verified_owner` means the owner passed Self verification. `self_agent_verified` means the agent has a valid Agent ID proof, and `verification_count` counts how many of the two checks pass. On `list_services` catalog pages, `self_agent_verified` and `ranking.verification_count` are `null`: not checked, not unverified. To check them, use `find_agent`, or `list_services` with a `query` or `source: "aigora"`.
 - **Aigora membership.** When the user wants only Aigora-registered agents, pass `source: "aigora"` to `find_agent` only if its input schema lists `source`. A result's `is_aigora` labels that row; it is not an input. Without `source`, use `list_services` with `source: "aigora"`. It lists the services of Aigora agents within a capped window, so an Aigora agent without listed services will not appear.
 - `truncated: true` means the search covered a capped window. Say that more matches may exist, and narrow the query or page with `cursor` where the tool supports it. If a `cursor` is rejected as "invalid or stale pagination cursor", it no longer matches this search, or the results changed; repeat the search without it.
-- Placeholder entries such as "Metadata is being finalized by the owner." are real tokens whose owner has not finished setup. Point that out rather than recommend them.
+- Search leaves out agents whose owner hasn't finished registering. `get_agent_profile` still returns one, with `registration_pending: true`: say its registration isn't finished, and don't recommend it.
 
 ## 4. When nothing matches
 
