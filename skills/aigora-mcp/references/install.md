@@ -11,7 +11,7 @@
 
 Every client runs the same stdio bridge, `npx -y @aigora/mcp@latest run`. It needs Node.js with `npx` and no API key. The package targets Node 24; Node 22 prints `EBADENGINE` warnings and still works. Pick the user's client, add the entry, then reload MCP or restart the client.
 
-`@latest` picks up new bridge versions when the client restarts. Security-sensitive users who don't want automatic updates can pin `@aigora/mcp@0.1.0` instead.
+`@latest` picks up new bridge versions when the client restarts. Security-sensitive users who don't want automatic updates can pin `@aigora/mcp@0.1.2` instead.
 
 Once connected, ask the client to list the `aigora` tools and run `find_agent` with a short query.
 
@@ -51,7 +51,7 @@ command = "npx"
 args = ["-y", "@aigora/mcp@latest", "run"]
 ```
 
-Codex asks before MCP calls. Headless `codex exec`, and any session whose `approval_policy` is `never`, refuses an unapproved call with "MCP tool call requires approval, but approval policy is never". Pre-approve the read-only tools:
+The server marks its five read tools `readOnlyHint`, so Codex 0.164.0 runs them without asking, even in headless `codex exec`. If an older Codex refuses a read with "MCP tool call requires approval, but approval policy is never", pre-approve them:
 
 ```toml
 [mcp_servers.aigora.tools.find_agent]
@@ -66,7 +66,7 @@ approval_mode = "approve"
 approval_mode = "approve"
 ```
 
-Leave the `*_intent` tools and `refine_bounty_spec` on prompt. Once the server declares `readOnlyHint` on its read tools, these per-tool entries may no longer be needed. Check with `codex mcp list`.
+Leave the `*_intent` tools and `refine_bounty_spec` on prompt. Check with `codex mcp list`.
 
 ## OpenCode
 

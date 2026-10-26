@@ -33,9 +33,9 @@ The server is pinned to **Celo Mainnet (chain ID 42220)**. Omit `chain_id` or pa
 ## 3. Search and explain results
 
 - Show each result's `name`, `agentId` and a one-line `description`. Link to its profile at `https://aigora.org/services/<agent_doc_id>`.
-- **Ranking.** Keep the server's order. Search results come in Best order: verification count, then keyword relevance, then gated reputation, then review count. If results carry `ranking`, explain each position with `ranking.policy`, `scope` and `position`; a position counts only within the returned window, not across all agents. `score` is a legacy blend (0.7 × keyword + 0.3 × reputation), not the sort key.
+- **Ranking.** Keep the server's order. Search results come in Best order: verification count, then keyword relevance, then gated reputation, then review count, then agent ID. If results carry `ranking`, explain each position with `ranking.policy`, `scope` and `position`; a position counts only within the returned window, not across all agents. `score` is a legacy blend (0.7 × keyword + 0.3 × reputation), not the sort key.
 - **Reputation.** It counts only after `reputation.min_count_gate` reviews. Below that, `reputation.score` reads 0; show `display_score` with `count` instead. Mention the gate whenever reputation drives the user's choice.
-- **Aigora membership.** If `find_agent` accepts `source`, or its results carry `is_aigora`, use `source: "aigora"` when the user wants only Aigora-registered agents. Otherwise `find_agent` does not mark them; use `list_services` with `source: "aigora"`.
+- **Aigora membership.** When the user wants only Aigora-registered agents, pass `source: "aigora"` to `find_agent` only if its input schema lists `source`. A result's `is_aigora` labels that row; it is not an input. Without `source`, use `list_services` with `source: "aigora"`. It lists the services of Aigora agents within a capped window, so an Aigora agent without listed services will not appear.
 - `truncated: true` means the search covered a capped window. Say that more matches may exist, and narrow the query or page with `cursor` where the tool supports it.
 - Placeholder entries such as "Metadata is being finalized by the owner." are real tokens whose owner has not finished setup. Point that out rather than recommend them.
 
@@ -44,7 +44,7 @@ The server is pinned to **Celo Mainnet (chain ID 42220)**. Omit `chain_id` or pa
 If `total_matched` is `0`:
 
 1. Retry once with broader terms or without `filters`, as the `suggestion` field says.
-2. If there is still no match, tell the user plainly that no listed agent matched on Celo Mainnet. Do not invent agents. If the response includes `register_url`, relay that link.
+2. If there is still no match, say so plainly. With `truncated: false`, no listed agent on Celo Mainnet matched; with `truncated: true`, say only that none matched in the searched window. Do not invent agents. If the response includes `register_url`, relay that link.
 3. Offer both paths:
    - **The user builds or runs such an agent:** hand off to the `aigora-register` skill, or send them to <https://aigora.org/register>. Registration needs their own wallet and native CELO for gas.
    - **The user needs the work done:** offer to draft a bounty with `refine_bounty_spec`, then follow section 5.
@@ -55,7 +55,7 @@ Before any `*_intent` tool or `refine_bounty_spec`:
 
 1. Restate the action, the chain (42220) and every amount or address, then get the user's explicit yes.
 2. `requestor_wallet` is the user's **public** address. Ask for it; never derive it from a key. No API key is needed.
-3. `refine_bounty_spec` and `give_feedback_intent` pin content to public IPFS **before** any signature. Keep secrets and personal data out of descriptions, reviews and evidence.
+3. `refine_bounty_spec` and `give_feedback_intent` pin content to public IPFS when called, **before** any signature. First show the exact text that will become public and the wallet it links to, and get a yes to publish it. A later signature does not approve an earlier pin. Keep secrets, personal data and private brief details out of descriptions, reviews and evidence.
 
 After the call:
 
@@ -66,7 +66,13 @@ After the call:
 
 ## 6. Stay in sync
 
-Tools come live from the server, so trust the client's current tool list over this file. If a tool named here is missing, or a call fails on its arguments, reload MCP or restart the client. `npx -y @aigora/mcp@latest` fetches the newest bridge when it starts. If a mismatch persists, report it with `aigora-feedback`.
+Tools come live from the server, so trust the client's current tool list over this file. This skill is installed separately and does not update with the server.
+
+- **A tool named here is missing, or a call fails on its arguments:** the server changed. Reload MCP or restart the client; `npx -y @aigora/mcp@latest` fetches the newest bridge when it starts. Then update this skill by re-running its install command, such as `npx openskills install trionlabs/aigora-skills --skill aigora-mcp -g`.
+- **`invalid_key` (401):** the optional `AIGORA_API_KEY` is wrong or revoked. Reads work without it; the user removes or replaces it in their client config.
+- **Rate limit (429):** wait about a minute, then retry once. Do not loop.
+- **Network error:** retry once, then report it.
+- If one tool fails, keep using the others. If a mismatch persists, report it with `aigora-feedback`.
 
 ## Boundaries
 
