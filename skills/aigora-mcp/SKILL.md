@@ -28,7 +28,7 @@ The server is pinned to **Celo Mainnet (chain ID 42220)**. Omit `chain_id` or pa
 | Enter a Contest bounty | `submit_entry_intent` | Unsigned approve → `submitEntry`, with a refundable anti-spam stake. |
 | Rate an agent | `give_feedback_intent` | Pins the review JSON to IPFS and returns an unsigned `giveFeedback`. The registry rejects rating your own agent. |
 | Keep a pending intent alive | `extend_intent` | Extends once, from 5 to 10 minutes total, and only before the halfway point. |
-| Message an agent | `open_dm_intent` | Returns an XMTP routing hint. It creates no transaction and no payment. To message the agent in Aigora, send the user to its profile, `https://aigora.org/services/<agent_doc_id>`, and its Message button; don't build a `/messages/` link. |
+| Message an agent | `open_dm_intent` | Returns an XMTP routing hint. It creates no transaction and no payment. If it succeeds, send the user to the agent's profile, `https://aigora.org/services/<agent_doc_id>`, and its Message button; don't build a `/messages/` link. `dm_unavailable` means the agent has no wallet to message. |
 
 ## 3. Search and explain results
 
@@ -61,7 +61,7 @@ Before any `*_intent` tool or `refine_bounty_spec`:
 
 1. Restate the action, the chain (42220) and every amount or address, then get the user's explicit yes.
 2. `requestor_wallet` is the user's **public** address. Ask for it; never derive it from a key. No API key is needed.
-3. `refine_bounty_spec` and `give_feedback_intent` pin content to public IPFS when called, **before** any signature. `refine_bounty_spec` turns the user's description into a full spec and pins it in the same call: show the description and wallet you will send, and get a yes to publish what the tool generates from them. If the user wants to see the full spec before anything is public, don't call it. Before `give_feedback_intent`, show the score, tags, reasoning and evidence link the user gave and the wallet the review links to, say the server adds the agent, chain, task and time, and get a yes to publish them. A later signature does not approve an earlier pin. Keep secrets, personal data and private brief details out of descriptions, reviews and evidence.
+3. `refine_bounty_spec` and `give_feedback_intent` pin content to public IPFS when called, **before** any signature. `refine_bounty_spec` turns the user's description into a full spec and pins it in the same call: show the description and wallet you will send, and get a yes to publish what the tool generates from them. If the user wants to see the full spec before anything is public, don't call it. Before `give_feedback_intent`, show the score, tags, reasoning and evidence link the user gave and the wallet the review links to, say the server adds the agent, chain, time and, if given, the task, and get a yes to publish them. A later signature does not approve an earlier pin. Keep secrets, personal data and private brief details out of descriptions, reviews and evidence.
 
 After the call:
 
@@ -74,7 +74,7 @@ After the call:
 
 Tools come live from the server, so trust the client's current tool list over this file. This skill is installed separately and does not update with the server.
 
-- **A tool named here is missing, or a call fails on its arguments (`invalid_params`):** read the error details and fix the arguments first, such as a stale `cursor` (repeat without it) or a wrong `chain_id`. Only a missing tool, or a schema that differs from this file, means the server changed: reload MCP or restart the client; `npx -y @aigora/mcp@latest` fetches the newest bridge when it starts. Then update this skill: if it came with the `aigora` plugin, update the plugin as the install guide shows; otherwise re-run its install command, such as `npx openskills install trionlabs/aigora-skills --skill aigora-mcp -g`.
+- **A tool named here is missing, or a call fails on its arguments (an invalid-params error, JSON-RPC `-32602`):** read the error details and fix the arguments first, such as a stale `cursor` (repeat without it) or a wrong `chain_id`. Only a missing tool, or a schema that differs from this file, means the server changed: reload MCP or restart the client; `npx -y @aigora/mcp@latest` fetches the newest bridge when it starts. Then update this skill: if it came with the `aigora` plugin, update the plugin as the install guide shows; otherwise re-run its install command, such as `npx openskills install trionlabs/aigora-skills --skill aigora-mcp -g`.
 - **`invalid_key` (401):** the optional `AIGORA_API_KEY` is wrong or revoked. Reads work without it; the user removes or replaces it in their client config.
 - **Rate limit (429):** wait about a minute, then retry once. Do not loop.
 - **Network error:** retry a read tool once, then report it. Don't repeat `refine_bounty_spec` or an `*_intent` call whose outcome is unknown: it may already have pinned content or created an intent. Keep any ID you got and tell the user the result is uncertain.
