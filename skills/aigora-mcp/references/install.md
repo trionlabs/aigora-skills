@@ -2,30 +2,63 @@
 
 ## Contents
 
-- Claude Code
-- Codex CLI (including headless approval)
-- OpenCode
-- Hermes Agent (not verified)
-- OpenClaw (not verified)
+- Claude apps (claude.ai, Desktop, Cowork, mobile): connector
+- Claude Code: plugin
+- Codex CLI: plugin
+- Other clients and the npm bridge: Claude Code, Codex CLI, OpenCode, Hermes Agent, OpenClaw
 - Optional settings
 
-Every client runs the same stdio bridge, `npx -y @aigora/mcp@latest run`. It needs Node.js with `npx` and no API key. The package targets Node 24; Node 22 prints `EBADENGINE` warnings and still works. Pick the user's client, add the entry, then reload MCP or restart the client.
-
-`@latest` picks up new bridge versions when the client restarts. Security-sensitive users who don't want automatic updates can pin `@aigora/mcp@0.1.2` instead.
+The Aigora MCP server is at `https://aigora-prd-mcp-vfl5n4ujkq-ey.a.run.app/mcp`. Claude apps connect to it directly. Claude Code and Codex install the `aigora` plugin, which bundles these skills and connects by URL; nothing is installed or run locally. Other clients run the stdio bridge `npx -y @aigora/mcp@latest run`. Pick the user's client, add the entry, then reload MCP or restart the client. No API key is needed.
 
 Once connected, ask the client to list the `aigora` tools and run `find_agent` with a short query.
 
-| Client | Status |
-|---|---|
-| Claude Code | Verified (2.1.310) |
-| Codex CLI | Verified (0.164.0) |
-| OpenCode | Verified (1.19.3) |
-| Hermes Agent | From official docs; not verified |
-| OpenClaw | From official docs; not verified |
+| Client | Way | Status |
+|---|---|---|
+| Claude apps | Connector | From Anthropic's docs; not verified |
+| Claude Code | Plugin | Verified (2.1.310) |
+| Codex CLI | Plugin | Install verified (0.164.0) |
+| Claude Code, Codex CLI, OpenCode | npm bridge | Verified (2.1.310, 0.164.0, 1.19.3) |
+| Hermes Agent, OpenClaw | npm bridge | From official docs; not verified |
 
-"Verified" means the server connected, the `aigora` tools were listed, and `find_agent` returned live Celo Mainnet results in that client version.
+"Verified" means the server connected, the `aigora` tools were listed, and `find_agent` returned live Celo Mainnet results in that client version. "Install verified" means the plugin installed and its server was listed as enabled.
 
-## Claude Code
+## Claude apps: connector
+
+In claude.ai, Claude Desktop or Cowork, open **Customize > Connectors**, add a custom connector, and enter:
+
+- Name: `Aigora`
+- URL: `https://aigora-prd-mcp-vfl5n4ujkq-ey.a.run.app/mcp`
+- Authentication: **No sign in**
+
+On Team and Enterprise plans, an owner adds the connector first. Leave the intent tools (`*_intent`, `refine_bounty_spec`) on "ask"; approve only the read tools if the app offers "Allow always".
+
+## Claude Code: plugin
+
+```text
+/plugin marketplace add trionlabs/aigora-skills
+/plugin install aigora@aigora
+```
+
+The plugin adds the `aigora` MCP server and the `aigora-mcp`, `aigora-register` and `aigora-feedback` skills. Its tools appear as `mcp__plugin_aigora_aigora__<tool>`. Update with `/plugin marketplace update aigora`.
+
+To connect without the plugin: `claude mcp add --transport http aigora https://aigora-prd-mcp-vfl5n4ujkq-ey.a.run.app/mcp`.
+
+## Codex CLI: plugin
+
+```bash
+codex plugin marketplace add trionlabs/aigora-skills
+codex plugin add aigora@aigora
+```
+
+Start a new session afterwards. Codex runs the five read tools without asking, because the server marks them `readOnlyHint`; it still asks before the intent tools. Update with `codex plugin marketplace upgrade`.
+
+To connect without the plugin: `codex mcp add aigora --url https://aigora-prd-mcp-vfl5n4ujkq-ey.a.run.app/mcp`.
+
+## Other clients and the npm bridge
+
+The bridge needs Node.js with `npx`. The package targets Node 24; Node 22 prints `EBADENGINE` warnings and still works. `@latest` picks up new bridge versions when the client restarts. Security-sensitive users who don't want automatic updates can pin `@aigora/mcp@0.1.2` instead.
+
+### Claude Code
 
 ```bash
 claude mcp add aigora -- npx -y @aigora/mcp@latest run
@@ -41,7 +74,7 @@ Or, as a JSON file for `--mcp-config` or a project `.mcp.json`:
 
 Check with `/mcp` in a session, or `claude mcp list`.
 
-## Codex CLI
+### Codex CLI
 
 Add this to `~/.codex/config.toml`:
 
@@ -68,7 +101,7 @@ approval_mode = "approve"
 
 Leave the `*_intent` tools and `refine_bounty_spec` on prompt. Check with `codex mcp list`.
 
-## OpenCode
+### OpenCode
 
 Add this to `opencode.json` in the project, or to `~/.config/opencode/opencode.json`:
 
@@ -83,7 +116,7 @@ Add this to `opencode.json` in the project, or to `~/.config/opencode/opencode.j
 
 Check with `opencode mcp list`; it should show `✓ aigora connected`.
 
-## Hermes Agent (not verified)
+### Hermes Agent (not verified)
 
 Add this to `~/.hermes/config.yaml`, following the [Hermes MCP docs](https://hermes-agent.nousresearch.com/docs/user-guide/features/mcp):
 
@@ -97,7 +130,7 @@ mcp_servers:
 
 Check with `hermes mcp test aigora`, or run `/reload-mcp` in a session. Tools appear as `mcp_aigora_<tool>`.
 
-## OpenClaw (not verified)
+### OpenClaw (not verified)
 
 Following the [OpenClaw MCP docs](https://docs.openclaw.ai/cli/mcp/registry):
 

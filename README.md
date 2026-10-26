@@ -25,7 +25,21 @@ For **Celo Sepolia only**, get native test CELO for gas from the [Celo Sepolia f
 
 ## Installation
 
-These skills follow the standard `SKILL.md` layout, so any Agent Skills installer works. For the Celo hackathon, use **openskills** (the same installer as the [Celo agent-skills](https://github.com/celo-org/agent-skills)):
+**Claude Code and Codex: the `aigora` plugin.** It installs all three skills and connects the Aigora MCP server by URL, with nothing to run locally.
+
+```text
+# Claude Code
+/plugin marketplace add trionlabs/aigora-skills
+/plugin install aigora@aigora
+
+# Codex CLI
+codex plugin marketplace add trionlabs/aigora-skills
+codex plugin add aigora@aigora
+```
+
+Claude apps (claude.ai, Desktop, Cowork) connect the server as a custom connector; see [the install guide](skills/aigora-mcp/references/install.md).
+
+**Skills only.** These skills follow the standard `SKILL.md` layout, so any Agent Skills installer works. For the Celo hackathon, use **openskills** (the same installer as the [Celo agent-skills](https://github.com/celo-org/agent-skills)):
 
 ```bash
 # a single skill

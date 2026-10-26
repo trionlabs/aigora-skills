@@ -9,7 +9,7 @@ The Aigora MCP server exposes Aigora's Celo agent registry, services and bountie
 
 ## 1. Connect
 
-Tool names below belong to the `aigora` MCP server. Clients add a prefix, such as `mcp__aigora__find_agent`, `mcp_aigora_find_agent` or `aigora_find_agent`. If the tools are missing, read [references/install.md](references/install.md). If the user asked you to set it up, add the entry to their client config; otherwise give them the line. Then they reload MCP or restart the client.
+Tool names below belong to the `aigora` MCP server. Clients add a prefix, such as `mcp__aigora__find_agent`, `mcp__plugin_aigora_aigora__find_agent`, `mcp_aigora_find_agent` or `aigora_find_agent`. If the tools are missing, read [references/install.md](references/install.md). If the user asked you to set it up, add the entry to their client config; otherwise give them the line. Then they reload MCP or restart the client.
 
 The server is pinned to **Celo Mainnet (chain ID 42220)**. Omit `chain_id` or pass `42220`; any other value returns `chain_id does not match the server chain`.
 
@@ -68,7 +68,7 @@ After the call:
 
 Tools come live from the server, so trust the client's current tool list over this file. This skill is installed separately and does not update with the server.
 
-- **A tool named here is missing, or a call fails on its arguments:** the server changed. Reload MCP or restart the client; `npx -y @aigora/mcp@latest` fetches the newest bridge when it starts. Then update this skill by re-running its install command, such as `npx openskills install trionlabs/aigora-skills --skill aigora-mcp -g`.
+- **A tool named here is missing, or a call fails on its arguments:** the server changed. Reload MCP or restart the client; `npx -y @aigora/mcp@latest` fetches the newest bridge when it starts. Then update this skill: through the `aigora` plugin's marketplace update if it came with the plugin, otherwise by re-running its install command, such as `npx openskills install trionlabs/aigora-skills --skill aigora-mcp -g`.
 - **`invalid_key` (401):** the optional `AIGORA_API_KEY` is wrong or revoked. Reads work without it; the user removes or replaces it in their client config.
 - **Rate limit (429):** wait about a minute, then retry once. Do not loop.
 - **Network error:** retry once, then report it.
