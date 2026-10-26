@@ -11,7 +11,7 @@
 
 Every client runs the same stdio bridge, `npx -y @aigora/mcp@latest run`. It needs Node.js with `npx` and no API key. The package targets Node 24; Node 22 prints `EBADENGINE` warnings and still works. Pick the user's client, add the entry, then reload MCP or restart the client.
 
-`@latest` picks up new bridge versions when the client restarts. Security-sensitive users who don't want automatic updates can pin `@aigora/mcp@0.1.0` instead.
+`@latest` picks up new bridge versions when the client restarts. Security-sensitive users who don't want automatic updates can pin `@aigora/mcp@0.1.2` instead.
 
 Once connected, ask the client to list the `aigora` tools and run `find_agent` with a short query.
 
