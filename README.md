@@ -43,9 +43,9 @@ Claude apps (claude.ai, Desktop, Cowork) connect the server as a custom connecto
 
 ```bash
 # a single skill
-npx openskills install trionlabs/aigora-skills --skill aigora-register -g
-npx openskills install trionlabs/aigora-skills --skill aigora-feedback -g
-npx openskills install trionlabs/aigora-skills --skill aigora-mcp -g
+npx openskills install trionlabs/aigora-skills/skills/aigora-register -g
+npx openskills install trionlabs/aigora-skills/skills/aigora-feedback -g
+npx openskills install trionlabs/aigora-skills/skills/aigora-mcp -g
 
 # everything in this repo
 npx openskills install trionlabs/aigora-skills -g
