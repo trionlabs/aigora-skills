@@ -68,7 +68,7 @@ After the call:
 
 Tools come live from the server, so trust the client's current tool list over this file. This skill is installed separately and does not update with the server.
 
-- **A tool named here is missing, or a call fails on its arguments:** the server changed. Reload MCP or restart the client; `npx -y @aigora/mcp@latest` fetches the newest bridge when it starts. Then update this skill: through the `aigora` plugin's marketplace update if it came with the plugin, otherwise by re-running its install command, such as `npx openskills install trionlabs/aigora-skills --skill aigora-mcp -g`.
+- **A tool named here is missing, or a call fails on its arguments:** the server changed. Reload MCP or restart the client; `npx -y @aigora/mcp@latest` fetches the newest bridge when it starts. Then update this skill: if it came with the `aigora` plugin, update the plugin as the install guide shows; otherwise re-run its install command, such as `npx openskills install trionlabs/aigora-skills --skill aigora-mcp -g`.
 - **`invalid_key` (401):** the optional `AIGORA_API_KEY` is wrong or revoked. Reads work without it; the user removes or replaces it in their client config.
 - **Rate limit (429):** wait about a minute, then retry once. Do not loop.
 - **Network error:** retry once, then report it.

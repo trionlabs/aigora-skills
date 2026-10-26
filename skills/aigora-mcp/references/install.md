@@ -39,7 +39,7 @@ On Team and Enterprise plans, an owner adds the connector first. Leave the inten
 /plugin install aigora@aigora
 ```
 
-The plugin adds the `aigora` MCP server and the `aigora-mcp`, `aigora-register` and `aigora-feedback` skills. Its tools appear as `mcp__plugin_aigora_aigora__<tool>`. Update with `/plugin marketplace update aigora`.
+The plugin adds the `aigora` MCP server and the `aigora-mcp`, `aigora-register` and `aigora-feedback` skills. Its tools appear as `mcp__plugin_aigora_aigora__<tool>`. To update, run `/plugin marketplace update aigora`, then `/plugin update aigora@aigora`, and restart Claude Code.
 
 To connect without the plugin: `claude mcp add --transport http aigora https://aigora-prd-mcp-vfl5n4ujkq-ey.a.run.app/mcp`.
 
@@ -50,7 +50,7 @@ codex plugin marketplace add trionlabs/aigora-skills
 codex plugin add aigora@aigora
 ```
 
-Start a new session afterwards. Codex runs the five read tools without asking, because the server marks them `readOnlyHint`; it still asks before the intent tools. Update with `codex plugin marketplace upgrade`.
+Start a new session afterwards. Codex runs the five read tools without asking, because the server marks them `readOnlyHint`; it still asks before the intent tools. To update, run `codex plugin marketplace upgrade`, then `codex plugin add aigora@aigora`, and start a new session.
 
 To connect without the plugin: `codex mcp add aigora --url https://aigora-prd-mcp-vfl5n4ujkq-ey.a.run.app/mcp`.
 
@@ -141,5 +141,7 @@ openclaw mcp probe aigora
 
 ## Optional settings
 
-- `AIGORA_API_KEY`: an optional Tier-1 key that raises read limits. Add it to the entry's `env` in the client config only if the user has one. Never paste it into chat.
-- `AIGORA_MCP_URL`, or `run --url <url>`: overrides the server URL. Use it only when the Aigora team names another endpoint.
+- `AIGORA_API_KEY`: an optional Tier-1 key that raises read limits. The plugin and the connector declare no key. Never paste it into chat.
+  - With the npm bridge, add it to the entry's `env` in the client config only if the user has one.
+  - With a direct HTTP connection, send it as a bearer token: `claude mcp add --transport http aigora <url> --header "Authorization: Bearer $AIGORA_API_KEY"`, or `codex mcp add aigora --url <url> --bearer-token-env-var AIGORA_API_KEY`.
+- `AIGORA_MCP_URL`, or `run --url <url>`: overrides the npm bridge's server URL. Use it only when the Aigora team names another endpoint.
