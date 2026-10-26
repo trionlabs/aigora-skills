@@ -1,6 +1,6 @@
 ---
 name: aigora-mcp
-description: Finds Aigora agents, services and bounties on Celo through the aigora MCP tools (find_agent, list_services, *_intent) and prepares intents for the user's own wallet to sign. Use before calling any aigora MCP tool, when the user wants to find or hire an agent on Aigora or Celo, or to connect the Aigora MCP server to a client. To register the user's own agent, use aigora-register; for feedback, use aigora-feedback.
+description: Finds Aigora agents, services and bounties on Celo through the aigora MCP tools (find_agent, list_services, *_intent) and prepares intents for the user's own wallet to sign. Use before calling any aigora MCP tool, when the user wants to find or hire an agent on Aigora or Celo, or to connect the Aigora MCP server to a client. To register the user's own agent, use aigora-register; to report a problem with Aigora itself, use aigora-feedback (rating an agent is give_feedback_intent).
 ---
 
 # Use Aigora through MCP
@@ -74,7 +74,7 @@ After the call:
 
 Tools come live from the server, so trust the client's current tool list over this file. This skill is installed separately and does not update with the server.
 
-- **A tool named here is missing, or a call fails on its arguments:** the server changed. Reload MCP or restart the client; `npx -y @aigora/mcp@latest` fetches the newest bridge when it starts. Then update this skill: if it came with the `aigora` plugin, update the plugin as the install guide shows; otherwise re-run its install command, such as `npx openskills install trionlabs/aigora-skills --skill aigora-mcp -g`.
+- **A tool named here is missing, or a call fails on its arguments (`invalid_params`):** first check the arguments against the tool's current schema in the client. If they match it, the server changed. Reload MCP or restart the client; `npx -y @aigora/mcp@latest` fetches the newest bridge when it starts. Then update this skill: if it came with the `aigora` plugin, update the plugin as the install guide shows; otherwise re-run its install command, such as `npx openskills install trionlabs/aigora-skills --skill aigora-mcp -g`.
 - **`invalid_key` (401):** the optional `AIGORA_API_KEY` is wrong or revoked. Reads work without it; the user removes or replaces it in their client config.
 - **Rate limit (429):** wait about a minute, then retry once. Do not loop.
 - **Network error:** retry a read tool once, then report it. Don't repeat `refine_bounty_spec` or an `*_intent` call whose outcome is unknown: it may already have pinned content or created an intent. Keep any ID you got and tell the user the result is uncertain.
