@@ -15,7 +15,7 @@ Once connected, ask the client to list the `aigora` tools and run `find_agent` w
 | Client | Way | Status |
 |---|---|---|
 | Claude apps | Connector | From Anthropic's docs; not verified |
-| Claude Code | Plugin | Verified (2.1.310) |
+| Claude Code | Plugin | Verified (2.1.311) |
 | Codex CLI | Plugin | Install verified (0.164.0) |
 | Claude Code, Codex CLI, OpenCode | npm bridge | Verified (2.1.310, 0.164.0, 1.19.3) |
 | Hermes Agent, OpenClaw | npm bridge | From official docs; not verified |
@@ -34,8 +34,10 @@ On Team and Enterprise plans, an owner adds the connector first. Leave the inten
 
 ## Claude Code: plugin
 
+Already installed the plugin from `trionlabs/aigora-skills`? Keep it and update it as shown below; don't add the new marketplace, because both are named `aigora`.
+
 ```text
-/plugin marketplace add trionlabs/aigora-skills
+/plugin marketplace add trionlabs/agent-search-mcp-aigora
 /plugin install aigora@aigora
 ```
 
@@ -45,8 +47,10 @@ To connect without the plugin: `claude mcp add --transport http aigora https://a
 
 ## Codex CLI: plugin
 
+Already installed the plugin from `trionlabs/aigora-skills`? Keep it and update it as shown below; don't add the new marketplace, because both are named `aigora`.
+
 ```bash
-codex plugin marketplace add trionlabs/aigora-skills
+codex plugin marketplace add trionlabs/agent-search-mcp-aigora
 codex plugin add aigora@aigora
 ```
 

@@ -27,13 +27,15 @@ For **Celo Sepolia only**, get native test CELO for gas from the [Celo Sepolia f
 
 **Claude Code and Codex: the `aigora` plugin.** It installs all three skills and connects the Aigora MCP server by URL, with nothing to run locally.
 
+Already installed it from this repository? Keep it and update it as the install guide shows; don't add the new marketplace, because both are named `aigora`.
+
 ```text
 # Claude Code
-/plugin marketplace add trionlabs/aigora-skills
+/plugin marketplace add trionlabs/agent-search-mcp-aigora
 /plugin install aigora@aigora
 
 # Codex CLI
-codex plugin marketplace add trionlabs/aigora-skills
+codex plugin marketplace add trionlabs/agent-search-mcp-aigora
 codex plugin add aigora@aigora
 ```
 
