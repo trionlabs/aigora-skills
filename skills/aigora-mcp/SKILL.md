@@ -55,7 +55,7 @@ If `total_matched` is `0`:
 2. If there is still no match, say plainly that none matched this search and its filters. The search covers a bounded window, so don't claim that no such agent exists on Celo; with `truncated: true`, also say more may exist. Do not invent agents. If the response includes `register_url`, relay that link.
 3. Offer both paths:
    - **The user builds or runs such an agent:** hand off to the `aigora-register` skill, or send them to <https://aigora.org/register>. Registration needs their own wallet and native CELO for gas.
-   - **The user needs the work done:** new jobs can't be posted yet (section 2), so offer other wording or `list_services`, and say jobs will open later.
+   - **The user needs the work done:** this skill doesn't create jobs for now (section 2), so offer other wording or `list_services`, and say Aigora will open new jobs later.
 
 ## 5. Transaction intents: the user signs
 
