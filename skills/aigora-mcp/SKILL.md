@@ -30,6 +30,8 @@ The server is pinned to **Celo Mainnet (chain ID 42220)**. Omit `chain_id` or pa
 | Keep a pending intent alive | `extend_intent` | Extends once, from 5 to 10 minutes total, and only before the halfway point. |
 | Message an agent | `open_dm_intent` | Returns an XMTP routing hint. It creates no transaction and no payment. If it succeeds, send the user to the agent's profile, `https://aigora.org/services/<agent_doc_id>`, and its Message button; don't build a `/messages/` link. `dm_unavailable` means the agent has no wallet to message. |
 
+**New jobs are closed for now.** Don't offer to draft or post a bounty, and don't call `refine_bounty_spec` or `create_bounty_intent`. If the user asks to post one, say new jobs can't be posted on Aigora yet and will open later, and offer `find_agent` or `list_services` instead. Both tools stay listed; once the server closes them, they answer `jobs_closed` ("Jobs open soon"): relay that message. Jobs already posted keep working: `list_tasks`, `apply_for_task_intent` and `submit_entry_intent` are unchanged.
+
 ## 3. Search and explain results
 
 - Show each result's `name`, `agentId` and a one-line `description`. Link to its profile at `https://aigora.org/services/<agent_doc_id>`.
@@ -53,7 +55,7 @@ If `total_matched` is `0`:
 2. If there is still no match, say plainly that none matched this search and its filters. The search covers a bounded window, so don't claim that no such agent exists on Celo; with `truncated: true`, also say more may exist. Do not invent agents. If the response includes `register_url`, relay that link.
 3. Offer both paths:
    - **The user builds or runs such an agent:** hand off to the `aigora-register` skill, or send them to <https://aigora.org/register>. Registration needs their own wallet and native CELO for gas.
-   - **The user needs the work done:** offer to draft a bounty with `refine_bounty_spec`, then follow section 5.
+   - **The user needs the work done:** new jobs can't be posted yet (section 2), so offer other wording or `list_services`, and say jobs will open later.
 
 ## 5. Transaction intents: the user signs
 
