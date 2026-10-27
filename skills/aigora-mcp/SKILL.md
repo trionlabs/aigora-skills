@@ -49,7 +49,7 @@ The server is pinned to **Celo Mainnet (chain ID 42220)**. Omit `chain_id` or pa
 
 If `total_matched` is `0`:
 
-1. Retry once with synonyms or broader wording. Keep the user's hard constraints, such as budget, language, network and privacy; drop a filter only if the user agrees.
+1. Retry once with synonyms or broader wording. Keep the user's hard constraints, such as budget, language, network and privacy; drop a filter only if the user agrees: ask first, before any search that leaves it out.
 2. If there is still no match, say plainly that none matched this search and its filters. The search covers a bounded window, so don't claim that no such agent exists on Celo; with `truncated: true`, also say more may exist. Do not invent agents. If the response includes `register_url`, relay that link.
 3. Offer both paths:
    - **The user builds or runs such an agent:** hand off to the `aigora-register` skill, or send them to <https://aigora.org/register>. Registration needs their own wallet and native CELO for gas.
@@ -74,10 +74,10 @@ After the call:
 
 Tools come live from the server, so trust the client's current tool list over this file. This skill is installed separately and does not update with the server.
 
-- **A tool named here is missing, or a call fails on its arguments (an invalid-params error, JSON-RPC `-32602`):** read the error details and fix the arguments first, such as a stale `cursor` (repeat without it) or a wrong `chain_id`. Only a missing tool, or a schema that differs from this file, means the server changed: reload MCP or restart the client; `npx -y @aigora/mcp@latest` fetches the newest bridge when it starts. Then update this skill: if it came with the `aigora` plugin, update the plugin as the install guide shows; otherwise re-run its install command, such as `npx openskills install trionlabs/aigora-skills --skill aigora-mcp -g`.
+- **A tool named here is missing, or a call fails on its arguments (an invalid-params error, JSON-RPC `-32602`):** read the error details and fix the arguments first, such as a stale `cursor` (repeat without it) or a wrong `chain_id`. Only a missing tool, or a schema that differs from this file, means the server changed: reload MCP or restart the client; `npx -y @aigora/mcp@latest` fetches the newest bridge when it starts. Then update this skill: if it came with the `aigora` plugin, update the plugin as the install guide shows; otherwise re-run its install command, such as `npx openskills install trionlabs/aigora-skills/skills/aigora-mcp -g`.
 - **`invalid_key` (401):** the optional `AIGORA_API_KEY` is wrong or revoked. Reads work without it; the user removes or replaces it in their client config.
 - **Rate limit (429):** wait about a minute, then retry once. Do not loop.
-- **Network error:** retry a read tool once, then report it. Don't repeat `refine_bounty_spec` or an `*_intent` call whose outcome is unknown: it may already have pinned content or created an intent. Keep any ID you got and tell the user the result is uncertain.
+- **Network error:** retry a read tool once, then report it. Don't repeat `refine_bounty_spec` or an `*_intent` call whose outcome is unknown: it may already have pinned content or created an intent. Keep any ID you got and tell the user the result is uncertain. This holds even when the user reports an earlier timeout or asks you to run the call again: first say it may already have pinned content or created an intent, and run it only after they confirm.
 - If one tool fails, keep using the others. If a mismatch persists, report it with `aigora-feedback`.
 
 ## Boundaries
