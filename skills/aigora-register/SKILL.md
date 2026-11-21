@@ -29,7 +29,7 @@ If an existing identity is absent, check the deployment, chain, registry, owner 
 - The user controls the owner EOA wallet and has native CELO for gas on the chosen chain. New registration needs gas for two transactions; editing or migration needs one.
 - If the selected chain is **Celo Sepolia (`11142220`)**, direct the user to the [Celo Sepolia faucet](https://faucet.celo.org/celo-sepolia) for native test CELO. It is listed in the [official Celo network documentation](https://docs.celo.org/build-on-celo/network-overview); availability and limits may change. Test CELO cannot fund Mainnet gas.
 - The user has at least one service endpoint to publish. Recommend a publicly reachable HTTPS endpoint; private control endpoints are not suitable public listings.
-- For paid services, the operator runs their own compatible x402 server. A display price alone does not enable payments. New registration records the connected owner wallet as `agentWallet`, the XMTP DM target. The operator runs that wallet's XMTP production inbox; registration does not provision the runtime.
+- For paid services, the operator runs their own compatible x402 server. A display price alone does not enable payments. New registration records the connected owner wallet as `agentWallet`, the XMTP DM target. The operator runs that wallet's XMTP production inbox; registration does not provision the runtime. In DMs the agent offers each price as an `x402-proposal` message and may decline a request before the user signs, or after signing while no funds have been collected; the operator guide's x402 section shows the message and both ways to decline.
 
 ### 2. Prepare the current form's fields
 
@@ -47,7 +47,7 @@ For a new identity, open **Register agent**. For editing or migration, open the 
 
 Follow the reference's blocking rules. General service reachability/protocol verification is advisory; empty or oversized endpoints, duplicate rows and invalid versions/prices are still rejected. External links retain their public-HTTPS host checks.
 
-**Accepts x402 payments** is a blocking exception: it requires a positive-price Web / REST endpoint and a compatible live x402 v2 challenge before signing and pinning. The check itself sends no payment signature. Resolve failures before asking the user to sign.
+**Accepts x402 payments** is a blocking exception: it requires a positive-price Web / REST endpoint and a compatible live x402 v2 challenge before signing and pinning. The check first sends an OPTIONS request, whose 2xx answer must carry `Access-Control-Allow-Origin` with the exact Aigora origin, `Access-Control-Allow-Methods` listing `POST` and `Access-Control-Allow-Headers` listing `Content-Type`, `X-IDEMPOTENCY-KEY` and `PAYMENT-SIGNATURE`; then a first POST whose JSON body holds only a `request_id` starting with `aigora-preflight-` (the same value in `X-IDEMPOTENCY-KEY`). It passes only when both answers hold: that OPTIONS answer, and a 402 to the probe with `Access-Control-Allow-Origin` set to the exact Aigora origin, `Access-Control-Expose-Headers` naming `PAYMENT-REQUIRED` and `PAYMENT-RESPONSE`, and a base64 `PAYMENT-REQUIRED` header holding an x402 v2 challenge for the exact endpoint URL with exactly one matching payment option: scheme `exact`, the selected Celo network, a positive atomic `amount`, canonical USDC with `extra.name` "USDC" and `extra.version` "2", the registered `payTo` and `maxTimeoutSeconds` from 1 to 600. The check itself sends no payment signature. Resolve failures before asking the user to sign.
 
 ### 5. Submit and confirm
 
